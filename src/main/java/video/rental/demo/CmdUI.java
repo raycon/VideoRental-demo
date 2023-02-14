@@ -251,17 +251,29 @@ public class CmdUI {
         saveCustomer(james);
     }
 
-    private void saveCustomer(Customer customer) {
-        doIt(customer, em::persist);
-    }
-
-    private void saveVideo(Video video) {
-        doIt(video, em::persist);
-    }
-
     /*
      * Database Access private methods
      */
+    
+    private void saveCustomer(Customer customer) {
+        try {
+            em.getTransaction().begin();
+            em.persist(customer);
+            em.getTransaction().commit();
+        } catch (PersistenceException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void saveVideo(Video video) {
+    	try {
+            em.getTransaction().begin();
+            em.persist(video);
+            em.getTransaction().commit();
+        } catch (PersistenceException ex) {
+            ex.printStackTrace();
+        }
+    }
 
     private List<Customer> findAllCustomers() {
         TypedQuery<Customer> query = em.createQuery("SELECT c FROM Customer c", Customer.class);
@@ -273,11 +285,11 @@ public class CmdUI {
         return query.getResultList();
     }
 
-    private <T> T find(Supplier<T> action) {
-        T value = null;
+    private Customer findCustomerById(int code) {
+        Customer value = null;
         try {
             em.getTransaction().begin();
-            value = action.get();
+            value = em.find(Customer.class, code);
             em.getTransaction().commit();
         } catch (PersistenceException ex) {
             ex.printStackTrace();
@@ -285,22 +297,16 @@ public class CmdUI {
         return value;
     }
 
-    private Customer findCustomerById(int code) {
-        return find(() -> em.find(Customer.class, code));
-    }
-
     private Video findVideoByTitle(String title) {
-        return find(() -> em.find(Video.class, title));
-    }
-
-    private <T> void doIt(T value, Consumer<T> action) {
+    	Video value = null;
         try {
             em.getTransaction().begin();
-            action.accept(value);
+            value = em.find(Video.class, title);
             em.getTransaction().commit();
         } catch (PersistenceException ex) {
             ex.printStackTrace();
         }
+        return value;
     }
 
 }

@@ -8,6 +8,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
+import video.rental.demo.application.Interactor;
+import video.rental.demo.domain.Repository;
+import video.rental.demo.infrastructure.RepositoryMemImpl;
+import video.rental.demo.presentation.CmdUI;
+import video.rental.demo.util.SampleGenerator;
+
 public class GoldenMaster {
 	private String simulatedInput = "1\n" // List customer
 			+ "2\n" // List video
@@ -35,7 +41,11 @@ public class GoldenMaster {
 		PrintStream pstream = new PrintStream(ostream);
 		System.setOut(pstream);
 
-		CmdUI ui = new CmdUI();
+		Repository repository = new RepositoryMemImpl();
+		new SampleGenerator(repository).generateSamples();
+		Interactor interactor = new Interactor(repository);
+		
+		CmdUI ui = new CmdUI(interactor);
 		ui.start();
 
 		return ostream.toString();

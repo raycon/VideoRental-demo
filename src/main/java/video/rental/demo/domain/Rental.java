@@ -1,13 +1,8 @@
 package video.rental.demo.domain;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
 
 @Entity
 public class Rental {
@@ -78,15 +73,7 @@ public class Rental {
     }
 
     public int getDaysRentedLimit() {
-        //@formatter:off
-		int limit = 0;
-		switch (video.getVideoType()) {
-            case Video.VHS: limit = 5;	break;
-            case Video.CD:  limit = 3;	break;
-            case Video.DVD: limit = 2;	break;
-		}
-		//@formatter:on
-        return limit;
+        return video.getVideoType().getDaysRentedLimit();
     }
 
     public int getDaysRented() {

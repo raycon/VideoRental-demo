@@ -6,13 +6,12 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "VIDEO", uniqueConstraints = {@UniqueConstraint(columnNames = {"title"})})
+@DiscriminatorColumn(name="videoType")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class Video {
     @Id
     private String title;
@@ -53,15 +52,7 @@ public class Video {
     }
 
     public int getLateReturnPointPenalty() {
-        //@formatter:off
-        int penalty = 0;
-        switch (videoType) {
-            case VHS: penalty = 1;  break;
-            case CD : penalty = 2;  break;
-            case DVD: penalty = 3;  break;
-        }
-        //@formatter:on
-        return penalty;
+        return getVideoType().getLateReturnPointPenalty();
     }
 
     public int getPriceCode() {
@@ -92,8 +83,8 @@ public class Video {
         return registeredDate;
     }
 
-    public int getVideoType() {
-        return videoType;
+    public VideoType getVideoType() {
+        return VideoType.from(videoType);
     }
 
     public boolean rentFor(Customer customer) {

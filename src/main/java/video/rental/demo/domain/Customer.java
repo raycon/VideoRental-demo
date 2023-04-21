@@ -68,22 +68,8 @@ public class Customer {
 			int eachPoint = 0;
 			int daysRented = each.getDaysRented();
 
-			switch (each.getVideo().getPriceCode()) {
-			case Video.REGULAR:
-				eachCharge += 2;
-				if (daysRented > 2)
-					eachCharge += (daysRented - 2) * 1.5;
-				break;
-			case Video.NEW_RELEASE:
-				eachCharge = daysRented * 3;
-				break;
-			case Video.CHILDREN:
-				eachCharge += 1.5;
-				if (daysRented > 3)
-					eachCharge += (daysRented - 3) * 1.5;
-				break;
-			}
-			
+			eachCharge += getEachCharge(each, daysRented);
+
 			eachPoint++;
 			if ((each.getVideo().getPriceCode() == Video.NEW_RELEASE))
 				eachPoint++;
@@ -107,6 +93,26 @@ public class Customer {
 		}
 
 		return result;
+	}
+
+	private double getEachCharge(Rental each, int daysRented) {
+		int charge = 0;
+		switch (each.getVideo().getPriceCode()) {
+		case Video.REGULAR:
+			charge += 2;
+			if (daysRented > 2)
+				charge += (daysRented - 2) * 1.5;
+			break;
+		case Video.NEW_RELEASE:
+			charge = daysRented * 3;
+			break;
+		case Video.CHILDREN:
+			charge += 1.5;
+			if (daysRented > 3)
+				charge += (daysRented - 3) * 1.5;
+			break;
+		}
+		return charge;
 	}
 
 }
